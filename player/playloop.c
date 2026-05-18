@@ -160,12 +160,30 @@ bool get_internal_paused(struct MPContext *mpctx)
     return mpctx->opts->pause || mpctx->paused_for_cache;
 }
 
+bool mpctx_eof_reached(struct MPContext *mpctx)
+{
+    return mpctx->video_status == STATUS_EOF &&
+           mpctx->audio_status == STATUS_EOF;
+}
+
 // The value passed here is the new value for mpctx->opts->pause
 void set_pause_state(struct MPContext *mpctx, bool user_pause)
 {
     struct MPOpts *opts = mpctx->opts;
+    bool restart_from_eof = opts->keep_open && opts->pause && !user_pause &&
+                            mpctx->paused && !mpctx->paused_for_cache &&
+                            mpctx->playback_initialized &&
+                            mpctx_eof_reached(mpctx);
 
     opts->pause = user_pause;
+
+    if (restart_from_eof) {
+        double start = get_start_time(mpctx, mpctx->play_dir);
+
+        mpctx->stop_play = KEEP_PLAYING;
+        mark_seek(mpctx);
+        queue_seek(mpctx, MPSEEK_ABSOLUTE, start, MPSEEK_DEFAULT, 0);
+    }
 
     bool internal_paused = get_internal_paused(mpctx);
     if (internal_paused != mpctx->paused) {

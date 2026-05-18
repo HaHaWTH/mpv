@@ -616,6 +616,7 @@ void set_pause_state(struct MPContext *mpctx, bool user_pause);
 void update_internal_pause_state(struct MPContext *mpctx);
 void update_core_idle_state(struct MPContext *mpctx);
 void add_step_frame(struct MPContext *mpctx, int dir, bool use_seek);
+bool mpctx_eof_reached(struct MPContext *mpctx);
 void step_frame_mute(struct MPContext *mpctx, bool mute);
 void queue_seek(struct MPContext *mpctx, enum seek_type type, double amount,
                 enum seek_precision exact, int flags);
