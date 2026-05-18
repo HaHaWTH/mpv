@@ -170,7 +170,7 @@ bool mpctx_eof_reached(struct MPContext *mpctx)
 void set_pause_state(struct MPContext *mpctx, bool user_pause)
 {
     struct MPOpts *opts = mpctx->opts;
-    bool restart_from_eof = opts->keep_open && opts->pause && !user_pause &&
+    bool restart_from_eof = opts->keep_open && !user_pause &&
                             mpctx->paused && !mpctx->paused_for_cache &&
                             mpctx->playback_initialized &&
                             mpctx_eof_reached(mpctx);
